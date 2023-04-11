@@ -45,21 +45,52 @@ def task2():
     for i in range(4):
         Y[i] = (B[i] - np.dot(L[i, :i], Y[ :i])) / L[i, i]
 
-    print("Y:\n",Y)
+    print("Y:\n", Y)
 
     for i in range(3,-1,-1):
         X[i] = (Y[i] - np.dot(U[i, i :], X[i:])) / U[i, i]
 
     print("X:\n", X)
 
-    Y_solve = np.linalg.solve(L, B)
-    print("LY=B\n", Y_solve)
-
-    X_solve = np.linalg.solve(U, Y_solve)
-    print("UX = Y:\n", X_solve)
-
     solve = np.linalg.solve(A, B)
-    print("Библиотечное перемножение A и B\n", solve)
+    print("Библиотечное решение A и B\n", solve)
+
+def task3():
+    A = np.array([[15.7, 6.6, -5.7, 11.5],
+                  [8.8, -6.7, 5.5, -4.5],
+                  [6.3, -5.7, -23.4, 6.6],
+                  [14.3, 8.7, -15.7, -5.8]])
+    print("Матрица A:\n", A)
+    B = np.array([-2.4, 5.6, 7.7, 23.4])
+    print("Вектор B:\n", B)
+
+    Q = np.zeros_like(A)
+    cnt = 0
+    for a in A.T:
+        u = np.copy(a)
+        for i in range(0, cnt):
+            u -= np.dot(np.dot(Q[:, i].T, a), Q[:, i])
+        e = u / np.linalg.norm(u)
+        Q[:, cnt] = e
+        cnt += 1
+
+    R = np.triu(np.dot(Q.T, A))
+    print("Q:\n", Q)
+    print("R:\n", R)
+
+    print("QR:\n", np.dot(Q, R))
+
+    X = np.zeros(4)
+    Y = np.zeros(4)
+
+    Y = np.dot(Q.T, B)
+
+    for i in range(3, -1, -1):
+        X[i] = (Y[i] - np.dot(R[i, i:], X[i:])) / R[i, i]
+
+    print("Ответ:\n", X)
+    print("Библиотечное решение:\n", np.linalg.solve(A, B))
+
 
 if __name__ == '__main__':
     task2()
